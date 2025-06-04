@@ -1,22 +1,15 @@
 FROM maven:3.9-eclipse-temurin-17 AS builder
-WORKDIR /app
+WORKDIR /build
 
-# 1. Parent POM'u kopyala
-COPY pom.xml .
+# monorepo root'u komple kopyala
+COPY . .
 
-# 2. Tüm modül dizinlerini kopyala
-COPY rest/pom.xml ./rest/
-COPY tcp/pom.xml ./tcp/
-COPY coordinator/pom.xml ./coordinator/
-
-# 3. Sadece ilgili modülün kaynak kodunu kopyala
-COPY tcp/src ./tcp/src
-
-# 4. Sadece "tcp" modülünü build et
+# sadece tcp modülünü derle
 RUN mvn clean package -pl tcp -am -DskipTests -q
 
 FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
-COPY --from=builder /app/tcp/target/tcp-*.jar app.jar
-EXPOSE 8081
+
+COPY --from=builder /build/tcp/target/tcp-*.jar app.jar
+EXPOSE 8082
 ENTRYPOINT ["java","-jar","app.jar"]
