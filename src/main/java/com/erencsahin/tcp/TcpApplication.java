@@ -130,7 +130,7 @@ public class TcpApplication {
 
     public static void main(String[] args) {
         int port = 8081;
-        long interval = 1000L;
+        long interval = 2000L;
 
         Map<String, Double> initialRates = new HashMap<>();
         initialRates.put("PF1_USDTRY", 38.41904);
